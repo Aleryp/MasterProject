@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "user": {
+            "id": 1,
+            "username": "example_user"
+        },
+        "date": "2024-10-10T12:00:00Z",
+        "feature": {
+            "id": 1,
+            "key": "example_feature"
+        },
+        "texts": [
+            {
+                "id": 1,
+                "text": "Processed Text 1: Your input text"
+            }
+        ],
+        "images": [],
+        "files": []
+    },
+    {
+        "id": 2,
+        "user": {
+            "id": 1,
+            "username": "example_user"
+        },
+        "date": "2024-10-09T11:00:00Z",
+        "feature": {
+            "id": 2,
+            "key": "another_feature"
+        },
+        "texts": [],
+        "images": [
+            {
+                "id": 1,
+                "image": "http://domain.com/media/images/processed_1_image.jpg"
+            }
+        ],
+        "files": []
+    }
+]

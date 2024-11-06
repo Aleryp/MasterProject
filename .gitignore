@@ -1,0 +1,5 @@
+/venv/
+/ShuGenAI/db.sqlite3
+/ShuGenAI/media/
+/.idea/
+/MasterProject.postman_collection.json
