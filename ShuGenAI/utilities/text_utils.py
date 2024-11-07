@@ -269,9 +269,8 @@ def check_grammar_with_openai(text):
     response_content = None
     try:
         # Step 1: Define prompts
-        system_prompt = """You are a teacher. There are instructions what you need to do:
-                            You should to check grammar of given text. Rewrite this text with all grammatical rules. Provide short summary what changed in text."""
-        user_prompt = f"This is text that you need to to fix: {text}"
+        system_prompt = """You are a teacher.Rewrite this text with all grammatical rules.Provide short summary of text."""
+        user_prompt = f"This is text: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
             model="gpt-4o-mini",  # Specify your model
