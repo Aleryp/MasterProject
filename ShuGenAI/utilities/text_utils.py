@@ -54,7 +54,7 @@ def generate_summary(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
@@ -116,7 +116,7 @@ def rewrite_text(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
@@ -178,7 +178,7 @@ def essay_writer(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
@@ -239,7 +239,7 @@ def paragraph_writer(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
@@ -300,7 +300,7 @@ def grammar_checker(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
@@ -361,7 +361,7 @@ def post_writer(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
@@ -422,7 +422,7 @@ def document_code(request, feature_key):
         text_file_name = "generated_text.txt"
         text_file_path = f"./tmp/{text_file_name}"
 
-        with open(text_file_path, 'w') as text_file:
+        with open(text_file_path, 'w', encoding="utf-8") as text_file:
             text_file.write(generated_text)
         # Read the .txt file to save to the History model
         with open(text_file_path, 'rb') as txt_file:
