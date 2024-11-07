@@ -1,3 +1,4 @@
+import time
 from io import BytesIO
 import pikepdf
 from PIL import Image
@@ -524,6 +525,8 @@ def convert_mp4_to_gif(request, feature_key):
                 frames.append(image)
             # Save frames to GIF
             frames[0].save(gif_path, save_all=True, append_images=frames[1:], loop=0, duration=125)  # 125ms per frame
+            clip = None
+            time.sleep(2)
         except Exception as e:
             return JsonResponse({"error": f"An error occurred during conversion: {str(e)}"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -559,6 +562,8 @@ def convert_mkv_to_mp4(request, feature_key):
             # Load the MKV video and write to MP4
             clip = VideoFileClip(temp_mkv_path)
             clip.write_videofile(mp4_path, codec='libx264', audio_codec='aac')
+            clip = None
+            time.sleep(2)
         except Exception as e:
             return JsonResponse({"error": f"An error occurred during conversion: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # Read the MP4 file to save to the History model
@@ -595,6 +600,9 @@ def convert_mp4_to_mp3(request, feature_key):
             # Extract audio and write to MP3
             audio = video.audio
             audio.write_audiofile(mp3_path, codec='mp3')
+            video = None
+            audio = None
+            time.sleep(2)
         except Exception as e:
             return JsonResponse({"error": f"An error occurred during audio extraction: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # Read the MP3 file to save to the History model
@@ -640,6 +648,8 @@ def compress_mp4(request, feature_key):
                 preset='slow',  # Compression preset (you can also try 'slow' or 'fast')
                 fps=25  # Optional: Lower the frame rate
             )
+            video = None
+            time.sleep(2)
         except Exception as e:
             return JsonResponse({"error": f"An error occurred during video compression: {str(e)}"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
