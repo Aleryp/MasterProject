@@ -60,7 +60,7 @@ def create_features_and_plans(sender, **kwargs):
     generate_summary, _ = Feature.objects.get_or_create(key="generate_summary")
     pro_functions.append(generate_summary)
     rewrite_text, _ = Feature.objects.get_or_create(key="rewrite_text")
-    pro_functions.append(generate_summary)
+    pro_functions.append(rewrite_text)
     essay_writer, _ = Feature.objects.get_or_create(key="essay_writer")
     pro_functions.append(essay_writer)
     paragraph_writer, _ = Feature.objects.get_or_create(key="paragraph_writer")
