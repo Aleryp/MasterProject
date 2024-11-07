@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from datetime import timedelta
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -103,16 +104,25 @@ class RecentFeaturesView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure user is authenticated
 
     def get(self, request):
-        # Get the five most recent features used by the authenticated user
+        # Get the user's history, ordered by most recent date
         recent_features = (
             History.objects.filter(user=request.user)
             .select_related('feature')  # Optimize query by selecting related feature
-            .order_by('-date')[:5]  # Order by date descending and limit to 5
+            .order_by('-date')
         )
 
-        # Extract the features and serialize them
-        features = [history.feature for history in recent_features]
-        serializer = FeatureKeySerializer(features, many=True)
+        # Use an ordered dict to keep unique features while preserving order
+        unique_features = OrderedDict()
+        for history in recent_features:
+            if history.feature_id not in unique_features:
+                unique_features[history.feature_id] = history.feature
+
+            # Stop if we have 5 unique features
+            if len(unique_features) == 5:
+                break
+
+        # Serialize the unique features
+        serializer = FeatureKeySerializer(unique_features.values(), many=True)
 
         # Return the serialized data
         return Response(serializer.data)
