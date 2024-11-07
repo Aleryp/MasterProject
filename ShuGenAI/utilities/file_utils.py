@@ -30,7 +30,7 @@ def convert_pdf_to_docx(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_pdf = request.FILES["file"]
         # Create a temporary file for the uploaded PDF
-        temp_pdf_path = f"/tmp/{uploaded_pdf.name}"
+        temp_pdf_path = f"./tmp/{uploaded_pdf.name}"
         # Save the uploaded PDF to a temporary location
         with open(temp_pdf_path, 'wb') as temp_file:
             for chunk in uploaded_pdf.chunks():
@@ -61,7 +61,7 @@ def convert_docx_to_pdf(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_docx = request.FILES["file"]
         # Save the uploaded DOCX temporarily
-        temp_docx_path = f"/tmp/{uploaded_docx.name}"
+        temp_docx_path = f"./tmp/{uploaded_docx.name}"
         with open(temp_docx_path, 'wb') as temp_file:
             for chunk in uploaded_docx.chunks():
                 temp_file.write(chunk)
@@ -122,7 +122,7 @@ def convert_docx_to_pdf(request, feature_key):
 def pdf_compression(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_pdf = request.FILES["file"]
-        temp_pdf_path = f"/tmp/{uploaded_pdf.name}"
+        temp_pdf_path = f"./tmp/{uploaded_pdf.name}"
         # Save the uploaded PDF to a temporary location
         with open(temp_pdf_path, 'wb') as temp_file:
             for chunk in uploaded_pdf.chunks():
@@ -159,7 +159,7 @@ def convert_xml_to_json(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_xml = request.FILES["file"]
         # Create a temporary file for the uploaded XML
-        temp_xml_path = f"/tmp/{uploaded_xml.name}"
+        temp_xml_path = f"./tmp/{uploaded_xml.name}"
         # Save the uploaded XML to a temporary location
         with open(temp_xml_path, 'wb') as temp_file:
             for chunk in uploaded_xml.chunks():
@@ -219,7 +219,7 @@ def convert_json_to_xml(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_json = request.FILES["file"]
         # Create a temporary file for the uploaded JSON
-        temp_json_path = f"/tmp/{uploaded_json.name}"
+        temp_json_path = f"./tmp/{uploaded_json.name}"
         # Save the uploaded JSON to a temporary location
         with open(temp_json_path, 'wb') as temp_file:
             for chunk in uploaded_json.chunks():
@@ -271,7 +271,7 @@ def convert_xml_to_csv(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_xml = request.FILES["file"]
         # Create a temporary file for the uploaded XML
-        temp_xml_path = f"/tmp/{uploaded_xml.name}"
+        temp_xml_path = f"./tmp/{uploaded_xml.name}"
         # Save the uploaded XML to a temporary location
         with open(temp_xml_path, 'wb') as temp_file:
             for chunk in uploaded_xml.chunks():
@@ -339,7 +339,7 @@ def convert_json_to_csv(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_json = request.FILES["file"]
         # Create a temporary file for the uploaded JSON
-        temp_json_path = f"/tmp/{uploaded_json.name}"
+        temp_json_path = f"./tmp/{uploaded_json.name}"
         # Save the uploaded JSON to a temporary location
         with open(temp_json_path, 'wb') as temp_file:
             for chunk in uploaded_json.chunks():
@@ -391,7 +391,7 @@ def convert_xls_to_csv(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_xls = request.FILES["file"]
         # Create a temporary file for the uploaded XLS
-        temp_xls_path = f"/tmp/{uploaded_xls.name}"
+        temp_xls_path = f"./tmp/{uploaded_xls.name}"
         # Save the uploaded XLS to a temporary location
         with open(temp_xls_path, 'wb') as temp_file:
             for chunk in uploaded_xls.chunks():
@@ -425,7 +425,7 @@ def convert_xls_to_json(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_xls = request.FILES["file"]
         # Create a temporary file for the uploaded XLS
-        temp_xls_path = f"/tmp/{uploaded_xls.name}"
+        temp_xls_path = f"./tmp/{uploaded_xls.name}"
         # Save the uploaded XLS to a temporary location
         with open(temp_xls_path, 'wb') as temp_file:
             for chunk in uploaded_xls.chunks():
@@ -461,7 +461,7 @@ def convert_xls_to_xml(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_xls = request.FILES["file"]
         # Create a temporary file for the uploaded XLS
-        temp_xls_path = f"/tmp/{uploaded_xls.name}"
+        temp_xls_path = f"./tmp/{uploaded_xls.name}"
         # Save the uploaded XLS to a temporary location
         with open(temp_xls_path, 'wb') as temp_file:
             for chunk in uploaded_xls.chunks():
@@ -504,7 +504,7 @@ def convert_xls_to_xml(request, feature_key):
 def convert_mp4_to_gif(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_video = request.FILES["file"]
-        temp_video_path = f"/tmp/{uploaded_video.name}"
+        temp_video_path = f"./tmp/{uploaded_video.name}"
         # Save the uploaded video to a temporary location
         with open(temp_video_path, 'wb') as temp_file:
             for chunk in uploaded_video.chunks():
@@ -549,7 +549,7 @@ def convert_mkv_to_mp4(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_video = request.FILES["file"]
         # Create a temporary file for the uploaded MKV
-        temp_mkv_path = f"/tmp/{uploaded_video.name}"
+        temp_mkv_path = f"./tmp/{uploaded_video.name}"
         # Save the uploaded MKV to a temporary location
         with open(temp_mkv_path, 'wb') as temp_file:
             for chunk in uploaded_video.chunks():
@@ -583,7 +583,7 @@ def convert_mp4_to_mp3(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_video = request.FILES["file"]
         # Create a temporary file for the uploaded MP4
-        temp_mp4_path = f"/tmp/{uploaded_video.name}"
+        temp_mp4_path = f"./tmp/{uploaded_video.name}"
         # Save the uploaded MP4 to a temporary location
         with open(temp_mp4_path, 'wb') as temp_file:
             for chunk in uploaded_video.chunks():
@@ -619,7 +619,7 @@ def convert_mp4_to_mp3(request, feature_key):
 def compress_mp4(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_video = request.FILES["file"]
-        temp_video_path = f"/tmp/{uploaded_video.name}"
+        temp_video_path = f"./tmp/{uploaded_video.name}"
 
         # Save the uploaded video to a temporary location
         with open(temp_video_path, 'wb') as temp_file:

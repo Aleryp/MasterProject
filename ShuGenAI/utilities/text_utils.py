@@ -52,7 +52,7 @@ def generate_summary(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
@@ -114,7 +114,7 @@ def rewrite_text(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
@@ -176,7 +176,7 @@ def essay_writer(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
@@ -237,7 +237,7 @@ def paragraph_writer(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
@@ -298,7 +298,7 @@ def grammar_checker(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
@@ -359,7 +359,7 @@ def post_writer(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
@@ -420,7 +420,7 @@ def document_code(request, feature_key):
                 generated_text = response
         # Save the generated text to a temporary .txt file
         text_file_name = "generated_text.txt"
-        text_file_path = f"/tmp/{text_file_name}"
+        text_file_path = f"./tmp/{text_file_name}"
 
         with open(text_file_path, 'w') as text_file:
             text_file.write(generated_text)
