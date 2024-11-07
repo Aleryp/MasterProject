@@ -127,6 +127,8 @@ def compress_image(request, feature_key):
         image = Image.open(uploaded_image)
         # Save the image to a BytesIO buffer with the specified quality
         buffer = BytesIO()
+        if image.mode in ("RGBA", "LA"):
+            image = image.convert("RGB")
         image.save(buffer, format="JPEG", quality=compression_quality)
         buffer.seek(0)
         # Create a ContentFile for saving to the FileField
