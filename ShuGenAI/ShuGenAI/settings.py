@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "secret_key"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "secret_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", True)
 
 ALLOWED_HOSTS = []
 
@@ -152,8 +152,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'email_user'
-EMAIL_HOST_PASSWORD = 'host_pass'
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "user")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "password")
 
 
 REST_FRAMEWORK = {
@@ -178,4 +178,4 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
 
-USE_MOCK_OUTPUT = True
+USE_MOCK_OUTPUT = os.environ.get("USE_MOCK_OUTPUT", True)
