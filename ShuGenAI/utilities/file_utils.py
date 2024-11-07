@@ -509,22 +509,21 @@ def convert_mp4_to_gif(request, feature_key):
         with open(temp_video_path, 'wb') as temp_file:
             for chunk in uploaded_video.chunks():
                 temp_file.write(chunk)
+
         gif_path = temp_video_path.replace('.mp4', '.gif')
         try:
             # Load the video
             clip = VideoFileClip(temp_video_path)
             # Resize the clip and adjust duration and frame rate
-            resized_clip = clip.resize(width=240)  # Resize width
-            resized_clip = resized_clip.set_duration(min(clip.duration, 5))  # Limit duration to 5 seconds
-            resized_clip.fps = 10  # Lower frame rate for smoother GIF
-            # Convert to GIF with imageio for better control
+            resized_clip = clip.resize(height=180)  # Reduce resolution
+            resized_clip.fps = 8  # Lower frame rate
+            # Convert to GIF with optimized color palette
             frames = []
             for frame in resized_clip.iter_frames(fps=resized_clip.fps, dtype='uint8'):
-                # Convert frame to a format suitable for GIF
-                image = Image.fromarray(frame)
+                image = Image.fromarray(frame).convert("P", palette=Image.ADAPTIVE, colors=32)
                 frames.append(image)
             # Save frames to GIF
-            frames[0].save(gif_path, save_all=True, append_images=frames[1:], loop=0, duration=100)  # 100ms per frame
+            frames[0].save(gif_path, save_all=True, append_images=frames[1:], loop=0, duration=125)  # 125ms per frame
         except Exception as e:
             return JsonResponse({"error": f"An error occurred during conversion: {str(e)}"},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
