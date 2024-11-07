@@ -471,6 +471,11 @@ def convert_xls_to_xml(request, feature_key):
         try:
             # Use pandas to read the XLS file
             df = pd.read_excel(temp_xls_path)
+            # Rename columns to make them XML-compatible (replace spaces, prefix numbers)
+            df.columns = [
+                f"Column_{col}" if isinstance(col, int) or str(col)[0].isdigit() else str(col).replace(" ", "_")
+                for col in df.columns
+            ]
             # Convert the DataFrame to XML
             xml_data = df.to_xml(index=False, root_name='Records', row_name='Record')
             # Save XML data to a file
