@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,6 +10,7 @@ from .serializers import (
     PasswordResetSerializer, PasswordResetVerificationSerializer, ResendVerificationSerializer,
     PasswordChangeSerializer, CardSerializer
 )
+from djoser.views import UserViewSet
 from .utils import generate_verification_code, send_verification_email, send_password_reset_code
 from django.contrib.auth import get_user_model
 from .models import Card
@@ -128,6 +130,18 @@ class PasswordChangeView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CustomUserViewSet(UserViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        # Avoid requiring current_password for deletion
+        user = self.get_object()
+        if user != request.user:
+            raise ValidationError("You can only delete your own account.")
+
+        user.delete()
+        return Response({"status": "Account deleted successfully"}, status=204)
+
 class CardListCreateView(generics.ListCreateAPIView):
     serializer_class = CardSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -149,4 +163,5 @@ class CardDeleteView(generics.DestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 

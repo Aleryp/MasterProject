@@ -17,10 +17,15 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
+from users.views import CustomUserViewSet
+
+router = DefaultRouter()
+router.register(r'users', CustomUserViewSet)
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('auth/', include('djoser.urls')),
+    path('auth/', include(router.urls)),
     path('auth/', include('djoser.urls.authtoken')),
     path('users/', include('users.urls')),
     path('features/', include('features.urls')),
