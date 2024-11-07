@@ -7,31 +7,30 @@ from django.conf import settings
 import os
 from openai import OpenAI
 
-
-client = OpenAI(api_key="api_key")
+api_key = "api_key"
+base_url = "https://api.aimlapi.com/v1"
+client = OpenAI(api_key=api_key, base_url=base_url)
 
 
 def process_file_with_openai(text):
     response_content = None
     try:
         # Step 1: Define prompts
-        system_prompt = """You will be provided with a file.
-                                If it is an image, then you need to describe what is in this image. If there is text on the image, then you need to process it as well.
-                                If it's a document, you need to tell what the document is about, including specifics, if any.
-                                For response use language as in file, if it document. In other cases use english."""
+        system_prompt = """You are a text analizer."""
         user_prompt = f"Give a short summary of file using provided instructions. Limit your response to 50 words. Process this text: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            max_tokens=100
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
         # Step 4: Delete the uploaded file after processing
         return response_content if response_content else "No content generated."
     except Exception as e:
@@ -85,15 +84,17 @@ def rewrite_text_with_openai(text):
         user_prompt = f"This is text to be rewriten: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
 
         return response_content if response_content else "No content generated."
     except Exception as e:
@@ -143,19 +144,21 @@ def write_essay_with_openai(text):
     try:
         # Step 1: Define prompts
         system_prompt = """You are a writer.
-                                You should write a medium sized essay on given topic"""
+                                You should write a medium sized essay on given topic. Limit Your response to 200 words."""
         user_prompt = f"This is topic for the essay: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
 
         return response_content if response_content else "No content generated."
     except Exception as e:
@@ -208,15 +211,17 @@ def write_paragraph_with_openai(text):
         user_prompt = f"This is topic for the paragraph: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
 
         return response_content if response_content else "No content generated."
     except Exception as e:
@@ -265,19 +270,21 @@ def check_grammar_with_openai(text):
     try:
         # Step 1: Define prompts
         system_prompt = """You are a teacher. There are instructions what you need to do:
-                                You should to check grammar of givent text. Rewrite this text with all grammatical rules. Provide short summary what changed in text."""
+                            You should to check grammar of given text. Rewrite this text with all grammatical rules. Provide short summary what changed in text."""
         user_prompt = f"This is text that you need to to fix: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
 
         return response_content if response_content else "No content generated."
     except Exception as e:
@@ -326,19 +333,21 @@ def write_post_with_openai(text):
     try:
         # Step 1: Define prompts
         system_prompt = """You are a SMM.
-                                You shoud write short post for the social media on given topic. Limit your response to 200 words."""
+                            You should write short post for the social media on given topic. Limit your response to 200 words."""
         user_prompt = f"This is a post topic: {text}"
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
 
         return response_content if response_content else "No content generated."
     except Exception as e:
@@ -391,15 +400,17 @@ def document_code_with_openai(text):
         user_prompt = f"This is a code to document: {text}. Limit your response to 200 words."
         # Step 2: Prepare the API call to OpenAI with the uploaded file
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",  # Specify your model
+            model="gpt-4o-mini",  # Specify your model
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
+            temperature=0.7,
+            max_tokens=256,
         )
         # Step 3: Get the response content
         if response.choices:
-            response_content = response.choices[0].message['content']
+            response_content = response.choices[0].message.content
 
         return response_content if response_content else "No content generated."
     except Exception as e:
