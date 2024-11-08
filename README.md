@@ -9,22 +9,29 @@
 
 ### _Project configuration_
 >DJANGO_SECRET_KEY - Put there Your secret key. In most cases it's a random string.
+> 
 >DJANGO_DEBUG - Allow You to see debug messages on errors. 
+> 
 >USE_MOCK_OUTPUT - This is mock AI features output. If You haven't API key for [AI/ML](aimlapi.com) set to True.
 
 ### _Database configuration_
 >POSTGRES_DB - Here provide Your database name.
->POSTGRES_USER - Here provide Your database user.
->POSTGRES_PASSWORD - Here provide Your database password.
->(If You run project on localhost for testing set variables above to `postgres`).
 > 
+>POSTGRES_USER - Here provide Your database user.
+> 
+>POSTGRES_PASSWORD - Here provide Your database password.
+> 
+>(If You run project on localhost for testing set variables above to `postgres`).
+>
 >POSTGRES_HOST - Do not change without need
+> 
 >POSTGRES_PORT - Do not change without need
 
 ### _Email configuration_
 > In app used `GMAIL` provider.
 > 
 >EMAIL_HOST_USER - Here provide Your email address.
+> 
 >EMAIL_HOST_PASSWORD - Here provide Your app password. 
 
 ### _AI API configuration_
