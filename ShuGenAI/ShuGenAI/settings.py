@@ -187,7 +187,7 @@ STATICFILES_DIRS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'http://localhost:3000', 'http://0.0.0.0:3000'
 ]
 
 USE_MOCK_OUTPUT = (os.environ.get("USE_MOCK_OUTPUT", "True") == "True")
