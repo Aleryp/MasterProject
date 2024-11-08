@@ -19,6 +19,7 @@ RUN pip install -r requirements.txt
 
 # Copy Django project
 COPY . /app/
+RUN chmod +x /app/run.sh
 
 # Expose the port Django will run on
 EXPOSE 8000

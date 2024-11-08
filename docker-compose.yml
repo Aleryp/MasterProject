@@ -5,9 +5,9 @@ services:
     build:
       context: .
     env_file: .env
-    command: ./run.sh
-    volumes:
-      - .:/app
+    entrypoint: ./run.sh
+#    volumes:
+#      - .:/app
     ports:
       - "8000:8000"
     depends_on:
