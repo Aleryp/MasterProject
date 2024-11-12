@@ -183,6 +183,10 @@ def determine_feature(request, feature_key):
                      "grammar_checker": text_utils.grammar_checker,
                      "post_writer": text_utils.post_writer,
                      "document_code": text_utils.document_code,
+                     "remove_background": image_utils.remove_background,
+                     "edit_background": image_utils.edit_background,
+                     "pick_up_object": image_utils.pick_up_object,
+                     "cut_out_object": image_utils.cut_out_object,
                      }
 
     return FEATURES_DICT[feature_key](request, feature_key)

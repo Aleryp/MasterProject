@@ -9,7 +9,6 @@ from ultralytics import YOLO
 from PIL import ImageFont, ImageDraw, Image, ImageFilter
 from diffusers import AutoPipelineForInpainting
 
-
 # Get the relative path of this file
 REL_PATH = Path(__file__).parent
 
@@ -72,7 +71,7 @@ class ImageAIUtils:
 
         # Load the color codes
         self.colors = [
-            np.array([int(c[i : i + 2], 16) for i in (1, 3, 5)])
+            np.array([int(c[i: i + 2], 16) for i in (1, 3, 5)])
             for c in color_codes
             if c
         ]
@@ -100,7 +99,7 @@ class ImageAIUtils:
             color = self.colors[c % len(self.colors)]
 
             num = counters.get(class_name, 0)
-            if num == 0:    
+            if num == 0:
                 counters[class_name] = 1
                 obj_text = class_name
             else:
@@ -182,10 +181,10 @@ class ImageAIUtils:
             x2, y2, w2, h2 = bbox2
 
             return (
-                abs(x1 - x2) <= threshold
-                or abs(y1 - y2) <= threshold
-                or abs((x1 + w1) - (x2 + w2)) <= threshold
-                or abs((y1 + h1) - (y2 + h2)) <= threshold
+                    abs(x1 - x2) <= threshold
+                    or abs(y1 - y2) <= threshold
+                    or abs((x1 + w1) - (x2 + w2)) <= threshold
+                    or abs((y1 + h1) - (y2 + h2)) <= threshold
             )
 
         main_object = objects[main_object_idx]
@@ -195,7 +194,7 @@ class ImageAIUtils:
             if i != main_object_idx:
                 # Check if object is close enough or overlaps with the main object's bounding box
                 if is_within_proximity(
-                    main_object["bbox"], obj["bbox"], threshold=proximity_threshold
+                        main_object["bbox"], obj["bbox"], threshold=proximity_threshold
                 ):
                     combined_mask = cv2.bitwise_or(
                         combined_mask, obj["mask"]
@@ -203,131 +202,118 @@ class ImageAIUtils:
 
         return combined_mask
 
+    # utility function for main object detection
+    def _get_main_object_index(self, objects):
+        # Assuming each object has a 'class' label, 'mask', and 'bbox' (bounding box)
+        return max(objects, key=lambda i: np.sum(objects[i]["mask"]))  # Largest mask area
 
-        # utility function for main object detection
-        def _get_main_object_index(self, objects):
-            # Assuming each object has a 'class' label, 'mask', and 'bbox' (bounding box)
-            return max(objects, key=lambda i: np.sum(objects[i]["mask"]))  # Largest mask area
+    # on image upload
+    def infer_image(self, image: PIL.Image) -> (PIL.Image, []):
 
+        # Get predictions for the image and overlay them on it
+        results = self.seg_model(image)
+        predictions = self._get_predictions_dict(results)
+        segmented_image = self._overlay_masks_on_image(image, predictions)
 
-        # on image upload
-        def infer_image(self, image: PIL.Image) -> (PIL.Image, []):
+        # TODO: predictions need to be saved somewhere
 
-            # Get predictions for the image and overlay them on it
-            results = self.seg_model(image)
-            predictions = self._get_predictions_dict(results)
-            segmented_image = self._overlay_masks_on_image(image, predictions)
+        return segmented_image, predictions
 
-            # TODO: predictions need to be saved somewhere
+    # remove background
+    def remove_background(self, image: PIL.Image, predictions) -> PIL.Image:
+        # TODO: load predictions from somewhere
 
-            return segmented_image, predictions
+        main_object_idx = self._get_main_object_index(predictions)
 
+        combined_mask = self._combine_masks_around_main_object(
+            predictions, main_object_idx, proximity_threshold=20
+        )
 
-        # remove background
-        def remove_background(self, image: PIL.Image) -> PIL.Image:
-            # TODO: load predictions from somewhere
-            predictions = {...}
+        # Convert the image to RGBA (if it's not already in that format)
+        background_removed_image = image.convert("RGBA")
 
-            main_object_idx = _get_main_object_index(predictions)
+        # Convert the numpy mask to a PIL image in grayscale mode
+        mask_image = Image.fromarray(combined_mask * 255, mode="L")
 
-            combined_mask = _combine_masks_around_main_object(
-                predictions, main_object_idx, proximity_threshold=20
-            )
+        # Set the background pixels to transparent
+        background_removed_image.putalpha(mask_image)
 
-            # Convert the image to RGBA (if it's not already in that format)
-            background_removed_image = image.convert("RGBA")
+        return background_removed_image
 
-            # Convert the numpy mask to a PIL image in grayscale mode
-            mask_image = Image.fromarray(combined_mask * 255, mode="L")
+    # Pick up an object
+    def pick_up_object(self, image: PIL.Image, object_list: [], predictions) -> PIL.Image:
 
-            # Set the background pixels to transparent
-            background_removed_image.putalpha(mask_image)
+        selected_objects = [predictions[i] for i in object_list]
 
-            return background_removed_image
+        # Merge the selected masks into one
+        merged_mask = np.zeros_like(selected_objects[0]["mask"], dtype=np.uint8)
+        for obj in selected_objects:
+            merged_mask = cv2.bitwise_or(merged_mask, obj["mask"])
 
+        # Convert the image to RGBA (if it's not already in that format)
+        background_removed_image = image.convert("RGBA")
 
-        # Pick up an object
-        def pick_up_object(self, image: PIL.Image, object_list: []) -> PIL.Image:
-            # TODO: load predictions from somewhere
-            predictions = {...}
+        # Convert the numpy mask to a PIL image in grayscale mode
+        mask_image = Image.fromarray(merged_mask * 255, mode="L")
 
-            selected_objects = [predictions[i] for i in object_list]
+        # Set the background pixels to transparent
+        background_removed_image.putalpha(mask_image)
 
-            # Merge the selected masks into one
-            merged_mask = np.zeros_like(selected_objects[0]["mask"], dtype=np.uint8)
-            for obj in selected_objects:
-                merged_mask = cv2.bitwise_or(merged_mask, obj["mask"])
+        return background_removed_image
 
-            # Convert the image to RGBA (if it's not already in that format)
-            background_removed_image = image.convert("RGBA")
+    # Edit background
+    def edit_background(self, image: PIL.Image, background_image: PIL.Image, predictions) -> PIL.Image:
 
-            # Convert the numpy mask to a PIL image in grayscale mode
-            mask_image = Image.fromarray(merged_mask * 255, mode="L")
+        main_object_idx = self._get_main_object_index(predictions)
 
-            # Set the background pixels to transparent
-            background_removed_image.putalpha(mask_image)
+        combined_mask = self._combine_masks_around_main_object(
+            predictions, main_object_idx, proximity_threshold=20
+        )
 
-            return background_removed_image
+        # Resize the background image to match the dimensions of the image
+        background_image = background_image.resize(image.size)
 
+        # Overlay the image on top of the resized background
+        background_removed_image = image.convert("RGBA")
 
-        # Edit background
-        def edit_background(self, image: PIL.Image, background_image: PIL.Image) -> PIL.Image:
-            # TODO: load predictions from somewhere
-            predictions = {...}
+        # Convert the numpy mask to a PIL image in grayscale mode
+        mask_image = Image.fromarray(combined_mask * 255, mode="L")
+        # Set the background pixels to transparent
+        background_removed_image.putalpha(mask_image)
 
-            main_object_idx = _get_main_object_index(predictions)
+        background_image = background_image.convert("RGBA")
+        edited_image = Image.alpha_composite(background_image, background_removed_image)
 
-            combined_mask = _combine_masks_around_main_object(
-                predictions, main_object_idx, proximity_threshold=20
-            )
+        return edited_image
 
-            # Resize the background image to match the dimensions of the image
-            background_image = background_image.resize(image.size)
+    # cut out object
+    def cut_out_object(self, image: PIL.Image, object_list: [], predictions) -> PIL.Image:
 
-            # Overlay the image on top of the resized background
-            background_removed_image = image.convert("RGBA")
+        # resize the image to 512x512
+        original_size = image.size
+        image = image.resize((512, 512))
 
-            # Convert the numpy mask to a PIL image in grayscale mode
-            mask_image = Image.fromarray(combined_mask * 255, mode="L")
-            # Set the background pixels to transparent
-            background_removed_image.putalpha(mask_image)
+        selected_objects = [predictions[i] for i in object_list]
 
-            background_image = background_image.convert("RGBA")
-            edited_image = Image.alpha_composite(background_image, background_removed_image)
+        # Merge the selected masks into one
+        merged_mask = np.zeros_like(selected_objects[0]["mask"], dtype=np.uint8)
+        for obj in selected_objects:
+            merged_mask = cv2.bitwise_or(merged_mask, obj["mask"])
 
-            return edited_image
+        # Make mask larger to include the object's outline
+        kernel = np.ones((10, 10), np.uint8)
 
+        # Dilate the mask
+        padded_mask = cv2.dilate(merged_mask, kernel, iterations=5)
 
-        # cut out object
-        def cut_out_object(self, image: PIL.Image, object_list: []) -> PIL.Image:
-            # TODO: load predictions from somewhere
-            predictions = {...}
+        mask_image = Image.fromarray(padded_mask * 255).convert("RGB").resize((512, 512))
 
-            # resize the image to 512x512
-            original_size = image.size
-            image = image.resize((512, 512))
+        prompt = "blends seamlessly with the surrounding area"
+        inpainted_image = self.inpaint_model(
+            prompt=prompt, image=image, mask_image=mask_image
+        ).images[0]
 
-            selected_objects = [predictions[i] for i in object_list]
+        # Resize the inpainted image back to its original size
+        inpainted_image = inpainted_image.resize(original_size)
 
-            # Merge the selected masks into one
-            merged_mask = np.zeros_like(selected_objects[0]["mask"], dtype=np.uint8)
-            for obj in selected_objects:
-                merged_mask = cv2.bitwise_or(merged_mask, obj["mask"])
-
-            # Make mask larger to include the object's outline
-            kernel = np.ones((10, 10), np.uint8)
-
-            # Dilate the mask
-            padded_mask = cv2.dilate(merged_mask, kernel, iterations=5)
-
-            mask_image = Image.fromarray(padded_mask * 255).convert("RGB").resize((512, 512))
-
-            prompt = "blends seamlessly with the surrounding area"
-            inpainted_image = self.inpaint_model(
-                prompt=prompt, image=image, mask_image=mask_image
-            ).images[0]
-
-            # Resize the inpainted image back to its original size
-            inpainted_image = inpainted_image.resize(original_size)
-
-            return inpainted_image
+        return inpainted_image

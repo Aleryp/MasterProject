@@ -71,6 +71,14 @@ def create_features_and_plans(sender, **kwargs):
     pro_functions.append(post_writer)
     document_code, _ = Feature.objects.get_or_create(key="document_code")
     pro_functions.append(document_code)
+    remove_background, _ = Feature.objects.get_or_create(key="remove_background")
+    pro_functions.append(remove_background)
+    edit_background, _ = Feature.objects.get_or_create(key="edit_background")
+    pro_functions.append(edit_background)
+    pick_up_object, _ = Feature.objects.get_or_create(key="pick_up_object")
+    pro_functions.append(pick_up_object)
+    cut_out_object, _ = Feature.objects.get_or_create(key="cut_out_object")
+    pro_functions.append(cut_out_object)
     pro_functions = pro_functions + advanced_functions
 
     # Step 2: Create plans and assign features
