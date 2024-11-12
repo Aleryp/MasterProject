@@ -4,16 +4,32 @@ FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04
 LABEL authors="aleryp"
 
 # Set environment variables for Django
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies for Django and ffmpeg
+# Install system dependencies and Python 3.10
 RUN apt-get update && \
-    apt-get install -y ffmpeg python3-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y \
+    software-properties-common \
+    wget \
+    curl \
+    ffmpeg && \
+    # Add Python 3.10 repository
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.10 python3.10-dev python3.10-venv && \
+    # Install pip for Python 3.10
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3.10 get-pip.py && \
+    # Ensure python3.10 is used as default
+    ln -sf /usr/bin/python3.10 /usr/bin/python3 && \
+    ln -sf /usr/bin/pip3 /usr/bin/pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm get-pip.py
 
 # Install Python dependencies
 COPY requirements.txt /app/
