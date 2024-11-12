@@ -1,6 +1,7 @@
-FROM python:3.10-slim
+# Use an NVIDIA CUDA base image for Python with GPU support
+FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04
+
 LABEL authors="aleryp"
-# Use an official Python image
 
 # Set environment variables for Django
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -11,11 +12,12 @@ WORKDIR /app
 
 # Install system dependencies for Django and ffmpeg
 RUN apt-get update && \
-    apt-get install -y ffmpeg
+    apt-get install -y ffmpeg python3-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy Django project
 COPY . /app/

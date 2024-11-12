@@ -6,12 +6,19 @@ services:
       context: .
     env_file: .env
     entrypoint: ./run.sh
-#    volumes:
-#      - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [ gpu ]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
   db:
     image: postgres:13
