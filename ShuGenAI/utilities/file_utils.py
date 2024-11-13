@@ -47,6 +47,8 @@ def convert_pdf_to_docx(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=docx_content, feature=feature)
         # Serialize the History instance
@@ -107,6 +109,8 @@ def convert_docx_to_pdf(request, feature_key):
             # Create History instance
             user = request.user if request.user.is_authenticated else None
             feature = Feature.objects.get(key=feature_key)
+            feature.used_count += 1
+            feature.save()
             history = History.objects.create(user=user, file=pdf_content, feature=feature)
             # Serialize History instance
             serializer = HistorySerializer(history, context={'request': request})
@@ -146,6 +150,8 @@ def pdf_compression(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=compressed_pdf_content, feature=feature)
         # Serialize the History instance
@@ -156,6 +162,7 @@ def pdf_compression(request, feature_key):
         # Return the serialized data
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
     return JsonResponse({"error": "Invalid request or no PDF provided"}, status=status.HTTP_400_BAD_REQUEST)
+
 def convert_xml_to_json(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
         uploaded_xml = request.FILES["file"]
@@ -179,6 +186,8 @@ def convert_xml_to_json(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=json_content, feature=feature)
         # Serialize the History instance
@@ -239,6 +248,8 @@ def convert_json_to_xml(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=xml_content, feature=feature)
         # Serialize the History instance
@@ -294,6 +305,8 @@ def convert_xml_to_csv(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=csv_content, feature=feature)
         # Serialize the History instance
@@ -376,6 +389,8 @@ def convert_json_to_csv(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=csv_content, feature=feature)
         # Serialize the History instance
@@ -411,6 +426,8 @@ def convert_xls_to_csv(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=csv_content, feature=feature)
         # Serialize the History instance
@@ -447,6 +464,8 @@ def convert_xls_to_json(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=json_content, feature=feature)
         # Serialize the History instance
@@ -490,6 +509,8 @@ def convert_xls_to_xml(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=xml_content, feature=feature)
         # Serialize the History instance
@@ -536,6 +557,8 @@ def convert_mp4_to_gif(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=gif_content, feature=feature)
         # Serialize the History instance
@@ -572,6 +595,8 @@ def convert_mkv_to_mp4(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=mp4_content, feature=feature)
         # Serialize the History instance
@@ -611,6 +636,8 @@ def convert_mp4_to_mp3(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=mp3_content, feature=feature)
         # Serialize the History instance
@@ -662,6 +689,8 @@ def compress_mp4(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
 
         # Create and save the History instance
         history = History.objects.create(user=user, file=compressed_content, feature=feature)

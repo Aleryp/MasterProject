@@ -61,6 +61,8 @@ def generate_summary(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
@@ -125,6 +127,8 @@ def rewrite_text(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
@@ -189,6 +193,8 @@ def essay_writer(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
@@ -252,6 +258,8 @@ def paragraph_writer(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
@@ -314,6 +322,8 @@ def grammar_checker(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
@@ -377,6 +387,8 @@ def post_writer(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
@@ -440,6 +452,8 @@ def document_code(request, feature_key):
         # Get the user and feature
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=txt_content, feature=feature)
         # Serialize the History instance
