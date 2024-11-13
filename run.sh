@@ -1,5 +1,5 @@
 #!/bin/bash
 
-python ShuGenAI/manage.py makemigrations
-python ShuGenAI/manage.py migrate
-python ShuGenAI/manage.py runserver 0.0.0.0:8000
+python3 ShuGenAI/manage.py makemigrations
+python3 ShuGenAI/manage.py migrate
+python3 ShuGenAI/manage.py runserver 0.0.0.0:8000
