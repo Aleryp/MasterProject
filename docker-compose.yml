@@ -10,15 +10,20 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    volumes:
+      - .:/app
     runtime: nvidia
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: [ gpu ]
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
   db:
     image: postgres:13
