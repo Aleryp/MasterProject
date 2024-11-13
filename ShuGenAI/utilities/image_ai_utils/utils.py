@@ -1,3 +1,5 @@
+import os
+
 import PIL
 import cv2
 import json
@@ -8,6 +10,8 @@ from pathlib import Path
 from ultralytics import YOLO
 from PIL import ImageFont, ImageDraw, Image, ImageFilter
 from diffusers import AutoPipelineForInpainting
+
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 # Get the relative path of this file
 REL_PATH = Path(__file__).parent
@@ -54,7 +58,7 @@ class ImageAIUtils:
 
         with open(UKR_LABELS_PATH) as f:
             self.ukr_labels = json.load(f)
-
+        torch.cuda.empty_cache()
         # Determine the device to use
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -63,7 +67,7 @@ class ImageAIUtils:
         self.seg_model.to(self.device)
 
         # Load the inpainting model
-        self.inpaint_model = AutoPipelineForInpainting.from_pretrained("runwayml/stable-diffusion-inpainting")
+        self.inpaint_model = AutoPipelineForInpainting.from_pretrained("runwayml/stable-diffusion-inpainting", max_memory={0: "3GiB", "cpu": "2GiB"}, torch_dtype=torch.float16)
         self.inpaint_model.to(self.device)
 
         # Load font
