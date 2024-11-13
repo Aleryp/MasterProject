@@ -1,3 +1,5 @@
+import base64
+
 import pillow_heif
 import rawpy
 from django.core.files.base import ContentFile
@@ -9,6 +11,9 @@ from features.models import History, Feature
 from features.serializers import HistorySerializer
 from django.apps import apps
 from django.core.files.storage import FileSystemStorage
+import pickle
+import numpy as np
+
 
 def convert_image_to_bw(request, feature_key):
     if request.method == "POST" and request.FILES.get("file"):
@@ -25,6 +30,8 @@ def convert_image_to_bw(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None # Feature ID should be provided in the request
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -56,6 +63,8 @@ def convert_image_to_round(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -84,6 +93,8 @@ def convert_image_to_pixelated(request, feature_key, pixel_size=5):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -110,6 +121,8 @@ def convert_image_to_blurred(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -138,6 +151,8 @@ def compress_image(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -165,6 +180,8 @@ def convert_heic_to_jpg(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -196,6 +213,8 @@ def convert_png_to_jpg(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -221,6 +240,8 @@ def convert_raw_to_jpg(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -246,6 +267,8 @@ def convert_tiff_to_jpg(request, feature_key):
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -263,13 +286,15 @@ def remove_background(request, feature_key):
         _, predictions = image_ai_utils.infer_image(input_image)
         image = image_ai_utils.remove_background(input_image, predictions)
         buffer = BytesIO()
-        image.save(buffer, format="JPEG")
+        image.save(buffer, format="PNG")
         buffer.seek(0)
         # Create a ContentFile for saving to the FileField
-        image_file = ContentFile(buffer.getvalue(), name="remove_background.jpg")
+        image_file = ContentFile(buffer.getvalue(), name="remove_background.png")
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -290,13 +315,15 @@ def edit_background(request, feature_key):
         image = image_ai_utils.edit_background(input_image, input_backgound, predictions)
 
         buffer = BytesIO()
-        image.save(buffer, format="JPEG")
+        image.save(buffer, format="PNG")
         buffer.seek(0)
         # Create a ContentFile for saving to the FileField
-        image_file = ContentFile(buffer.getvalue(), name="edited_background.jpg")
+        image_file = ContentFile(buffer.getvalue(), name="edited_background.png")
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
@@ -308,46 +335,80 @@ def edit_background(request, feature_key):
 
 def pick_up_object(request, feature_key):
     image_ai_utils = apps.get_app_config('utilities').image_ai_utils_instance
+
     if request.method == "POST" and request.FILES.get("file") and not request.POST.get('objects'):
         uploaded_image = request.FILES["file"]
         input_image = Image.open(uploaded_image)
+
         # Get predictions and segmented image
         segmented_image, predictions = image_ai_utils.infer_image(input_image)
-        # Store predictions as JSON in session
-        request.session['predictions'] = predictions
+
+        # Serialize predictions
+        serialized_predictions = pickle.dumps(predictions)
+
+        # Encode the serialized data as base64
+        encoded_predictions = base64.b64encode(serialized_predictions).decode('utf-8')
+
+        # Save the encoded string in the session
+        request.session['predictions'] = encoded_predictions
+
         # Save the segmented image to the file system
+        buffer = BytesIO()
+        segmented_image.save(buffer, format="PNG")
+        buffer.seek(0)
         fs = FileSystemStorage()
-        image_path = fs.save('segmented_images/segmented_image.jpg', ContentFile(segmented_image.tobytes()))
-        image_url = fs.url(image_path)  # Generate the URL of the saved image
+        image_path = fs.save('segmented_images/segmented_image.png', ContentFile(buffer.getvalue()))
+
         return JsonResponse({
-            'segmented_image_url': image_url,
-            'objects': predictions.keys()
+            'segmented_image_url': request.build_absolute_uri(fs.url(image_path)),
+            'objects': list(predictions.keys())
         })
-    if request.method == "POST" and request.FILES.get("file") and request.POST.get('objects'):
+
+    elif request.method == "POST" and request.FILES.get("file") and request.POST.get('objects'):
         uploaded_image = request.FILES["file"]
         input_image = Image.open(uploaded_image)
         objects_str = request.POST.get('objects')
+
         if ',' in objects_str:
             objects_list = objects_str.split(',')
         else:
             objects_list = [objects_str]
-        predictions = request.session.get('predictions', None)
+
+        # Retrieve the base64-encoded string from the session
+        encoded_predictions = request.session.get('predictions', None)
+        predictions = {}
+        if encoded_predictions:
+            # Decode the base64 string back to bytes
+            serialized_predictions = base64.b64decode(encoded_predictions.encode('utf-8'))
+
+            # Deserialize the predictions
+            predictions = pickle.loads(serialized_predictions)
+
+        # Process image with the picked-up objects
         image = image_ai_utils.pick_up_object(input_image, objects_list, predictions)
 
+        # Convert image to buffer for saving
         buffer = BytesIO()
-        image.save(buffer, format="JPEG")
+        image.save(buffer, format="PNG")
         buffer.seek(0)
-        # Create a ContentFile for saving to the FileField
-        image_file = ContentFile(buffer.getvalue(), name="edited_background.jpg")
+
+        # Create a ContentFile for saving the image
+        image_file = ContentFile(buffer.getvalue(), name="picked.png")
+
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
+
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
+
         # Serialize the History instance
         serializer = HistorySerializer(history, context={'request': request})
-        # Return the serialized data
+
         return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+
     return JsonResponse({"error": "Invalid request or no image provided"}, status=status.HTTP_400_BAD_REQUEST)
 
 def cut_out_object(request, feature_key):
@@ -357,15 +418,25 @@ def cut_out_object(request, feature_key):
         input_image = Image.open(uploaded_image)
         # Get predictions and segmented image
         segmented_image, predictions = image_ai_utils.infer_image(input_image)
-        # Store predictions as JSON in session
-        request.session['predictions'] = predictions
+        # Serialize predictions
+        serialized_predictions = pickle.dumps(predictions)
+
+        # Encode the serialized data as base64
+        encoded_predictions = base64.b64encode(serialized_predictions).decode('utf-8')
+
+        # Save the encoded string in the session
+        request.session['predictions'] = encoded_predictions
+
         # Save the segmented image to the file system
+        buffer = BytesIO()
+        segmented_image.save(buffer, format="PNG")
+        buffer.seek(0)
         fs = FileSystemStorage()
-        image_path = fs.save('segmented_images/segmented_image.jpg', ContentFile(segmented_image.tobytes()))
-        image_url = fs.url(image_path)  # Generate the URL of the saved image
+        image_path = fs.save('segmented_images/segmented_image.png', ContentFile(buffer.getvalue()))
+
         return JsonResponse({
-            'segmented_image_url': image_url,
-            'objects': predictions.keys()
+            'segmented_image_url': request.build_absolute_uri(fs.url(image_path)),
+            'objects': list(predictions.keys())
         })
     if request.method == "POST" and request.FILES.get("file") and request.POST.get('objects'):
         uploaded_image = request.FILES["file"]
@@ -375,17 +446,28 @@ def cut_out_object(request, feature_key):
             objects_list = objects_str.split(',')
         else:
             objects_list = [objects_str]
-        predictions = request.session.get('predictions', None)
+        # Retrieve the base64-encoded string from the session
+        encoded_predictions = request.session.get('predictions', None)
+        predictions = {}
+        if encoded_predictions:
+            # Decode the base64 string back to bytes
+            serialized_predictions = base64.b64decode(encoded_predictions.encode('utf-8'))
+
+            # Deserialize the predictions
+            predictions = pickle.loads(serialized_predictions)
+
         image = image_ai_utils.cut_out_object(input_image, objects_list, predictions)
 
         buffer = BytesIO()
-        image.save(buffer, format="JPEG")
+        image.save(buffer, format="PNG")
         buffer.seek(0)
         # Create a ContentFile for saving to the FileField
-        image_file = ContentFile(buffer.getvalue(), name="edited_background.jpg")
+        image_file = ContentFile(buffer.getvalue(), name="cut.png")
         # Get the user and feature, assuming the user is authenticated
         user = request.user if request.user.is_authenticated else None
         feature = Feature.objects.get(key=feature_key)
+        feature.used_count += 1
+        feature.save()
         # Create and save the History instance
         history = History.objects.create(user=user, file=image_file, feature=feature)
         # Serialize the History instance
