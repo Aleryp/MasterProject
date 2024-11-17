@@ -6,10 +6,9 @@ from features.models import History, Feature
 from users.models import User
 
 
-TEXT_FEATURE_KEYS = ['generate_summary',]  # Replace with your actual keys
-IMAGE_FEATURE_KEYS = ['black_and_white',]  # Replace with your actual keys
-FILE_FEATURE_KEYS = ['pdf_to_docx',]  # Replace with your actual keys
-
+TEXT_FEATURE_KEYS = ['generate_summary','rewrite_text', 'essay_writer', 'paragraph_writer', 'grammar_checker', 'post_writer', 'document_code']  # Replace with your actual keys
+IMAGE_FEATURE_KEYS = ['black_and_white','round_image', "pixelate_image", 'blur_image', 'compress_image', 'remove_background', 'edit_background', 'cut_out_object']  # Replace with your actual keys
+FILE_FEATURE_KEYS = ['pdf_to_docx','heif_to_jpg', 'png_to_jpg', 'raw_to_jpg', 'tiff_to_jpg', 'xml_to_json', 'xml_to_json', 'json_to_xml', 'xls_to_csv', 'xls_to_json', 'xls_to_xml', 'docx_to_pdf', 'compress_pdf', 'mp4_to_gif', 'mkv_to_mp4', 'mp4_to_mp3', 'compress_mp4']  # Replace with your actual keys
 
 
 class UserFeatureStatsView(APIView):
