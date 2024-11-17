@@ -80,7 +80,7 @@ class ImageAIUtils:
             if c
         ]
 
-    def _get_predictions_dict(self, results, lang="eng"):
+    def _get_predictions_dict(self, results, lang="en"):
         local_results = results[0].cpu()
 
         orig_shape = local_results.orig_shape
@@ -97,7 +97,7 @@ class ImageAIUtils:
             mask = np.zeros(orig_shape, dtype=np.uint8)
             cv2.fillPoly(mask, [polygon], 1)
 
-            class_name = self.ukr_labels[str(c)] if lang == "ukr" else self.eng_labels[str(c)]
+            class_name = self.ukr_labels[str(c)] if lang == "ua" else self.eng_labels[str(c)]
 
             # Get the color for the current class
             color = self.colors[c % len(self.colors)]
@@ -212,11 +212,11 @@ class ImageAIUtils:
         return max(objects, key=lambda i: np.sum(objects[i]["mask"]))  # Largest mask area
 
     # on image upload
-    def infer_image(self, image: PIL.Image) -> (PIL.Image, []):
+    def infer_image(self, image: PIL.Image, language="en") -> (PIL.Image, []):
 
         # Get predictions for the image and overlay them on it
         results = self.seg_model(image)
-        predictions = self._get_predictions_dict(results)
+        predictions = self._get_predictions_dict(results, language)
         segmented_image = self._overlay_masks_on_image(image, predictions)
 
         # TODO: predictions need to be saved somewhere
