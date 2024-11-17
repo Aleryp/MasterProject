@@ -6,6 +6,7 @@ from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from PIL import Image, ImageDraw, ImageFilter
 from io import BytesIO
+from django.contrib.staticfiles import finders
 from rest_framework import status
 from features.models import History, Feature
 from features.serializers import HistorySerializer
@@ -13,6 +14,20 @@ from django.apps import apps
 from django.core.files.storage import FileSystemStorage
 import pickle
 import numpy as np
+
+
+BACKGROUNDS_DICT = {
+    1: finders.find('backgrounds/city.jpg'),
+    2: finders.find('backgrounds/beach.jpg'),
+    3: finders.find('backgrounds/desert.jpg'),
+    4: finders.find('backgrounds/field.jpg'),
+    5: finders.find('backgrounds/forest_autumn.jpg'),
+    6: finders.find('backgrounds/forest.jpg'),
+    7: finders.find('backgrounds/mountains.jpg'),
+    8: finders.find('backgrounds/snow_mountains.jpg'),
+    9: finders.find('backgrounds/office.jpg'),
+    10: finders.find('backgrounds/underwater.jpg')
+}
 
 
 def convert_image_to_bw(request, feature_key):
@@ -305,14 +320,14 @@ def remove_background(request, feature_key):
 
 def edit_background(request, feature_key):
     image_ai_utils = apps.get_app_config('utilities').image_ai_utils_instance
-    if request.method == "POST" and request.FILES.get("file") and request.FILES.get("background"):
+    if request.method == "POST" and request.FILES.get("file") and request.POST.get("background"):
         uploaded_image = request.FILES["file"]
-        backgound_image = request.FILES["background"]
+        background_image = BACKGROUNDS_DICT[int(request.POST["background"])]
         input_image = Image.open(uploaded_image)
-        input_backgound = Image.open(backgound_image)
+        input_background = Image.open(background_image)
 
         _, predictions = image_ai_utils.infer_image(input_image)
-        image = image_ai_utils.edit_background(input_image, input_backgound, predictions)
+        image = image_ai_utils.edit_background(input_image, input_background, predictions)
 
         buffer = BytesIO()
         image.save(buffer, format="PNG")
@@ -339,9 +354,9 @@ def pick_up_object(request, feature_key):
     if request.method == "POST" and request.FILES.get("file") and not request.POST.get('objects'):
         uploaded_image = request.FILES["file"]
         input_image = Image.open(uploaded_image)
-
+        language = request.POST.get('language', "en")
         # Get predictions and segmented image
-        segmented_image, predictions = image_ai_utils.infer_image(input_image)
+        segmented_image, predictions = image_ai_utils.infer_image(input_image, language)
 
         # Serialize predictions
         serialized_predictions = pickle.dumps(predictions)
@@ -416,8 +431,9 @@ def cut_out_object(request, feature_key):
     if request.method == "POST" and request.FILES.get("file") and not request.POST.get('objects'):
         uploaded_image = request.FILES["file"]
         input_image = Image.open(uploaded_image)
+        language = request.POST.get('language', "en")
         # Get predictions and segmented image
-        segmented_image, predictions = image_ai_utils.infer_image(input_image)
+        segmented_image, predictions = image_ai_utils.infer_image(input_image, language)
         # Serialize predictions
         serialized_predictions = pickle.dumps(predictions)
 
