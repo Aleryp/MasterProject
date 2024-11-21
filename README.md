@@ -3,7 +3,19 @@
 
 
 ## This is instructions how to run this application.
-> Note: You need to have installed `docker` and `docker-compose` on Your computer.
+
+### Required hardware to run this project:
+ - Nvidia GPU(GTX10-series or newer)
+ - Minimum 16Gb RAM
+ - Intel Core i3/Ryzen 3 or higher
+
+### Required software to run this project:
+ - Ubuntu Linux or another Linux distribution
+ - Nvidia Container Toolkit
+ - Docker
+ - Docker-Compose
+
+
 
 ### First of all You need to fill .env file with Your data:
 
